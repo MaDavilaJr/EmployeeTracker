@@ -10,7 +10,7 @@ const connection = mysql.createConnection(
       password: 'Paco1234',
       database: 'employeeTracker_db'
     },
-    console.log(`Connected to the employeeTacker_db database.`)
+    console.log(`Connected to the employeeTracker_db database.`)
   );
 
   connection.connect(function (err) {

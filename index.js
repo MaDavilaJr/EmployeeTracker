@@ -43,6 +43,17 @@ function viewAllEmployees() {
     dbOptions();
 }
 
+function viewAllRoles() { // manager = department | employee = role
+    var sql = `SELECT * FROM role;`;
+
+    db.query(sql, function(err, res) {
+        if (err) throw err;
+
+        console.table(res);
+    })
+    dbOptions();
+}
+
 function addEmployee(){
     inquirer.prompt([
         {

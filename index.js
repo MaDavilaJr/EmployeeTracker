@@ -12,6 +12,7 @@ function dbOptions() {
             choices: [
                 'View All Employees',
                 'View All Roles',
+                'View All Departments',
                 'Add Employee'
             ]
         }
@@ -24,6 +25,9 @@ function dbOptions() {
                 break;
             case 'View All Roles':
                 viewAllRoles();
+                break;
+            case 'View All Departments':
+                viewAllDepartments();
                 break;
             case 'Add Employee':
                 addEmployee();
@@ -41,7 +45,29 @@ function viewAllEmployees() {
         console.table(res);
     })
     dbOptions();
-}
+};
+
+function viewAllRoles() { 
+    var sql = `SELECT * FROM role;`;
+
+    db.query(sql, function(err, res) {
+        if (err) throw err;
+
+        console.table(res);
+    })
+    dbOptions();
+};
+
+function viewAllDepartments() { 
+    var sql = `SELECT * FROM department;`;
+
+    db.query(sql, function(err, res) {
+        if (err) throw err;
+
+        console.table(res);
+    })
+    dbOptions();
+};
 
 function addEmployee(){
     inquirer.prompt([

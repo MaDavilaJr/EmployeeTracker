@@ -13,7 +13,8 @@ function dbOptions() {
                 'View All Employees',
                 'View All Roles',
                 'View All Departments',
-                'Add Employee'
+                'Add Employee',
+                'Add Role'
             ]
         }
     ]).then(res => {
@@ -31,6 +32,9 @@ function dbOptions() {
                 break;
             case 'Add Employee':
                 addEmployee();
+                break;
+            case 'Add Role':
+                addRole();
                 break;
         }
     })
@@ -133,6 +137,54 @@ function addEmployee(){
                         dbOptions()
                     })
                 })
+            })
+        })
+    })
+}
+
+function addRole(){
+    inquirer.prompt([
+        {
+            name: 'roleTitle',
+            message: "What is the role's title?"
+        },
+        {
+            name: 'roleSalary',
+            message: "What is the role's salary?"
+        }
+    ]).then(res => {
+        var roleTitle = res.roleTitle;
+        var roleSalary = res.roleSalary;
+        var sql1 = 'SELECT * FROM DEPARTMENT';
+        db.query(sql1, function(err, res) {
+            if(err) throw err;
+            var departmentChoices = res.map(({id, department_name}
+            ) => ({
+                name: department_name,
+                value: id
+            }));
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'departmentId',
+                    message: 'What is the new role department?',
+                    choices: departmentChoices
+                }
+            ]).then(res => {
+                var role = {
+                    department_id: res.department_id,
+                    title: roleTitle,
+                    salary: roleSalary
+                }
+                var sql2 = `INSERT INTO role SET ?`
+                db.query(sql2, role,
+                function(err, res) {
+                    if (err) throw err;
+                })
+            }).then(() => {
+                console.log(`Added ${roleTitle} to the Database`)
+                dbOptions()
             })
         })
     })

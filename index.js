@@ -14,7 +14,9 @@ function dbOptions() {
                 'View All Roles',
                 'View All Departments',
                 'Add Employee',
-                'Add Role'
+                'Add Role',
+                'Add Department',
+                'Update Employee'
             ]
         }
     ]).then(res => {
@@ -35,6 +37,12 @@ function dbOptions() {
                 break;
             case 'Add Role':
                 addRole();
+                break;
+            case 'Add Department':
+                addDepartment();
+                break;
+            case 'Update Employee':
+                updateEmployee();
                 break;
         }
     })
@@ -134,13 +142,13 @@ function addEmployee(){
                         })
                     }).then(() => {
                         console.log(`Added ${firstName} ${lastName} to the Database`)
-                        dbOptions()
+                        viewAllEmployees()
                     })
                 })
             })
         })
     })
-}
+};
 
 function addRole(){
     inquirer.prompt([
@@ -155,8 +163,8 @@ function addRole(){
     ]).then(res => {
         var roleTitle = res.roleTitle;
         var roleSalary = res.roleSalary;
-        var sql1 = 'SELECT * FROM DEPARTMENT';
-        db.query(sql1, function(err, res) {
+        var sql4 = 'SELECT * FROM DEPARTMENT';
+        db.query(sql4, function(err, res) {
             if(err) throw err;
             var departmentChoices = res.map(({id, department_name}
             ) => ({
@@ -177,18 +185,65 @@ function addRole(){
                     title: roleTitle,
                     salary: roleSalary
                 }
-                var sql2 = `INSERT INTO role SET ?`
-                db.query(sql2, role,
+                var sql5 = `INSERT INTO role SET ?`
+                db.query(sql5, role,
                 function(err, res) {
                     if (err) throw err;
                 })
             }).then(() => {
                 console.log(`Added ${roleTitle} to the Database`)
-                dbOptions()
+                viewAllRoles()
             })
         })
     })
+};
+
+function addDepartment(){
+    inquirer.prompt([
+        {
+            type: "input",
+            name: 'departmentTitle',
+            message: "What is the department's title?"
+        }
+    ]).then(res => {
+        var departmentTitle = res.departmentTitle;
+        
+    }).then(res => {
+        var department = {
+            departmentTitle: res.departmentTitle,
+            department_name: departmentTitle
+        }
+        var sql6 = `INSERT INTO department SET ?`
+        db.query(sql6, department,
+        function(err, res) {
+            if (err) throw err;
+        })
+    }).then(() => {
+        console.log(`Added ${departmentTitle} to the Database`)
+        dbOptions()
+    })
+};
+
+function updateEmployee() {
+    inquirer.prompt([
+        {
+            name: "employeeId",
+            message: "Which employee would you like to update?"
+        },
+        {
+            name: "roleId",
+            message: "What is the new role ID?"
+        }
+    ])
+    .then(() => {
+        db.query("update employee set role_id = ? where id = ?", [answer.roleId, answer.employee.Id],
+        (err, data) => {
+            console.log("Your new role has been updated!");
+            viewAllEmployees()
+        })
+    })
 }
+
 
 //Query all employees
 //Then ask inquirer prompt which employee to update

@@ -58,6 +58,17 @@ function viewAllRoles() { // manager = department | employee = role
     dbOptions();
 }
 
+function viewAllDepartments() { // manager = department | employee = role
+    var sql = `SELECT * FROM department;`;
+
+    db.query(sql, function(err, res) {
+        if (err) throw err;
+
+        console.table(res);
+    })
+    dbOptions();
+}
+
 function addEmployee(){
     inquirer.prompt([
         {
@@ -126,6 +137,93 @@ function addEmployee(){
         })
     })
 }
+
+function addRole(){
+    inquirer.prompt([
+        {
+            name: 'roleTitle',
+            message: "What is the role's title name?"
+        },
+        {
+            name: 'roleSalary',
+            message: "What is the role's salary?"
+        }
+    ]).then(res => {
+        var roleTitle = res.title;
+        var roleSalary = res.salary;
+        var sql1 = `SELECT * FROM DEPARTMENT`;
+        db.query(sql1, function(err, res) {
+            if(err) throw err;
+            var roleChoices = res.map(({id, name}) => ({
+                name: name,
+                value: id
+            }));
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'roleId',
+                    message: 'What is the new employee role?',
+                    choices: roleChoices
+                }
+            ]).then(res => {
+                var roleId = res.roleId;
+                var sql2 = `SELECT * FROM employee WHERE manager_id IS NULL;`
+
+                db.query(sql2, function(err, res) {
+                    if(err) throw err;
+                    var managerChoices = res.map(({id, first_name, last_name}) => ({
+                        name: `${first_name} ${last_name}`,
+                        value: id
+                    }));
+
+                    managerChoices.unshift({name: 'None', value: null});
+
+                    inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'managerId',
+                            message: 'Who will be the new employee manager?',
+                            choices: managerChoices
+                        }
+                    ]).then(res => {
+                        var employee = {
+                            manager_id: res.managerId,
+                            role_id: roleId,
+                            first_name: firstName,
+                            last_name: lastName
+                        }
+                        var sql3 = `INSERT INTO employee SET ?`
+                        db.query(sql3, employee, function(err, res) {
+                            if (err) throw err;
+                        })
+                    }).then(() => {
+                        console.log(`Added ${firstName} ${lastName} to the Database`)
+                        dbOptions()
+                    })
+                })
+            })
+        })
+    })
+}
+
+// function addDepartment(){
+//     inquirer.prompt([
+//         {
+//             name: 'departmentName',
+//             message: "What is the department's name?"
+//         },
+
+//     ]).then(res => {
+//         var departmentName = res.departmentName;
+
+//         var sql1 = `SELECT * FROM DEPARTMENT`;
+//         db.query(sql1, function(err, res) {
+//             if(err) throw err;
+//             var departmentChoices = res.map(({id, title}) => ({
+//                 name: title,
+//                 value: id
+//             }));}
 
 //Query all employees
 //Then ask inquirer prompt which employee to update

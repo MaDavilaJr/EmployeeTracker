@@ -163,7 +163,7 @@ function addRole(){
                 {
                     type: 'list',
                     name: 'roleId',
-                    message: 'What is the new employee role?',
+                    message: 'What is the new role?',
                     choices: roleChoices
                 }
             ]).then(res => {

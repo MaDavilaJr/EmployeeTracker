@@ -12,6 +12,7 @@ function dbOptions() {
             choices: [
                 'View All Employees',
                 'View All Roles',
+                'View All Departments',
                 'Add Employee'
             ]
         }
@@ -24,6 +25,9 @@ function dbOptions() {
                 break;
             case 'View All Roles':
                 viewAllRoles();
+                break;
+            case 'View All Departments':
+                 viewAllDepartments();
                 break;
             case 'Add Employee':
                 addEmployee();

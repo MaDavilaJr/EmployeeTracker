@@ -187,23 +187,17 @@ function addDepartment(){
             name: 'departmentTitle',
             message: "What is the department's title?"
         }
-    ]).then(res => {
-        var departmentTitle = res.departmentTitle;
+    ]).then((answer) => {
+        db.query(
+            "insert into department (name) values (?)",
+            [answer.depName],
+            (err, data) => {
+                console.log("New department added!");
+                viewAllDepartments();
+            }
+        );
+    });
         
-    }).then(res => {
-        var department = {
-            departmentTitle: res.departmentTitle,
-            name: departmentTitle
-        }
-        var sql6 = `INSERT INTO department SET ?`
-        db.query(sql6, department,
-        function(err, res) {
-            if (err) throw err;
-        })
-    }).then(() => {
-        console.log(`Added ${departmentTitle} to the Database`)
-        dbOptions()
-    })
 };
 
 function updateEmployee() {

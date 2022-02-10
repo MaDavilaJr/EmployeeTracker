@@ -150,53 +150,35 @@ function addEmployee(){
     })
 };
 
+
 function addRole(){
     inquirer.prompt([
         {
-            name: 'roleTitle',
+            type: "input",
+            name: "roleTitle",
             message: "What is the role's title?"
         },
         {
-            name: 'roleSalary',
+            type: "input",
+            name: "roleSal",
             message: "What is the role's salary?"
+        },
+        {
+            type: "input",
+            name: "roleDepID",
+            message: "what is this role's department ID?"
         }
-    ]).then(res => {
-        var roleTitle = res.roleTitle;
-        var roleSalary = res.roleSalary;
-        var sql4 = 'SELECT * FROM DEPARTMENT';
-        db.query(sql4, function(err, res) {
-            if(err) throw err;
-            var departmentChoices = res.map(({id, department_name}
-            ) => ({
-                name: department_name,
-                value: id
-            }));
-
-            inquirer.prompt([
-                {
-                    type: 'list',
-                    name: 'departmentId',
-                    message: 'What is the new role department?',
-                    choices: departmentChoices
-                }
-            ]).then(res => {
-                var role = {
-                    department_id: res.department_id,
-                    title: roleTitle,
-                    salary: roleSalary
-                }
-                var sql5 = `INSERT INTO role SET ?`
-                db.query(sql5, role,
-                function(err, res) {
-                    if (err) throw err;
-                })
-            }).then(() => {
-                console.log(`Added ${roleTitle} to the Database`)
-                viewAllRoles()
-            })
-        })
-    })
-};
+    ]).then((answer) => {
+        db.query(
+          "insert into role (title, salary, department_id) values (?, ?, ?)",
+          [answer.roleTitle, answer.roleSal, answer.roleDepID],
+          (err, data) => {
+            console.log("New role added!");
+            viewAllRoles();
+          }
+        )
+    });
+}
 
 function addDepartment(){
     inquirer.prompt([
@@ -211,7 +193,7 @@ function addDepartment(){
     }).then(res => {
         var department = {
             departmentTitle: res.departmentTitle,
-            department_name: departmentTitle
+            name: departmentTitle
         }
         var sql6 = `INSERT INTO department SET ?`
         db.query(sql6, department,

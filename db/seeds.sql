@@ -1,7 +1,7 @@
 use employeeTracker_db;
 
 INSERT INTO department
-    (department_name)
+    (name)
 VALUES
     ('Engineering'),
     ('Human Resources'),

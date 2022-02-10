@@ -203,16 +203,18 @@ function addDepartment(){
 function updateEmployee() {
     inquirer.prompt([
         {
+            type: "input",
             name: "employeeId",
             message: "Which employee would you like to update?"
         },
         {
+            type: "input",
             name: "roleId",
             message: "What is the new role ID?"
         }
     ])
-    .then(() => {
-        db.query("update employee set role_id = ? where id = ?", [answer.roleId, answer.employee.Id],
+    .then((answer) => {
+        db.query("update employee set role_id = ? where id = ?", [answer.roleId, answer.employeeId],
         (err, data) => {
             console.log("Your new role has been updated!");
             viewAllEmployees()

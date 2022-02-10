@@ -1,6 +1,7 @@
 const db = require('./db/connection');
 const inquirer = require('inquirer');
 const { first } = require('lodash');
+const connection = require('./db/connection');
 require('console.table');
 
 function dbOptions() {
@@ -16,7 +17,8 @@ function dbOptions() {
                 'Add Employee',
                 'Add Role',
                 'Add Department',
-                'Update Employee'
+                'Update Employee',
+                'Delete Employee'
             ]
         }
     ]).then(res => {
@@ -43,6 +45,9 @@ function dbOptions() {
                 break;
             case 'Update Employee':
                 updateEmployee();
+                break;
+            case 'Delete Employee':
+                deleteEmployee();
                 break;
         }
     })
@@ -220,6 +225,38 @@ function updateEmployee() {
             viewAllEmployees()
         })
     })
+}
+
+function deleteEmployee() {
+    connection.query("SELECT * FROM employee", (err,res) => {
+        if (err) throw err;
+
+    const chosenEmployee = [];
+    res.forEach(({ first_name, last_name, id }) => {
+        chosenEmployee.push({
+            name: first_name + " " + last_name,
+            value: id
+        });
+    });
+    let firedEmployee = [{
+        type: "list",
+        name: "id",
+        choices: chosenEmployee,
+        message: "Which employee is being deleted?"
+    }]
+    inquirer.prompt(firedEmployee)
+    .then(response => {
+        const query = `DELETE FROM EMPLOYEE WHERE id = ?`;
+        connection.query(query, [response.id], (err,res) => {
+            if (err) throw err;
+            console.log(`${res.affectedRows} row(s) succesfully deleted!`);
+            dbOptions();
+        });
+    })
+    .catch(err => {
+        console.log(err);
+    })
+});
 }
 
 
